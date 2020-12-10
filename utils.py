@@ -4,15 +4,15 @@ import yaml
 import warnings
 import torch
 
-def __check_audio_types(audio: np.ndarray):
+def _check_audio_types(audio: np.ndarray):
     assert isinstance(audio, np.ndarray), f'expected np.ndarray but got {type(audio)} as input.'
     assert audio.ndim == 2, f'audio must be shape (channels, time), got shape {audio.shape}'
     if audio.shape[-1] < audio.shape[-2]:
         warnings.warn(f'IALMODELWARNING: got audio shape {audio.shape}. Audio should be (channels, time). \
                         typically, the number of samples is much larger than the number of channels. ')
 
-def __is_mono(self, audio: np.ndarray):
-    __check_audio_types(audio)
+def _is_mono(audio: np.ndarray):
+    _check_audio_types(audio)
     num_channels = audio.shape[-2]
     return num_channels == 1
 
@@ -23,7 +23,9 @@ def load_audio_file(path_to_audio, sample_rate=48000):
         audio (np.ndarray): monophonic audio with shape (channels, samples) 
     """
     audio, sr = librosa.load(path_to_audio, mono=True, sr=sample_rate)
-    return np.expand_dims(audio, axis=-2)
+    # add channel dimension
+    audio = np.expand_dims(audio, axis=-2)
+    return audio
 
 def load_jit_model(path_to_model: str) -> torch.jit.ScriptModule:
     """ loads a torch.jit model
@@ -44,6 +46,7 @@ def load_classlist(path_to_classlist: str) -> list:
     """
     with open(path_to_classlist, 'r') as f:
         classlist = yaml.load(f, Loader=yaml.SafeLoader)
+    return classlist
 
 def downmix(audio: np.ndarray):
     """ downmix an audio array. 
@@ -52,11 +55,11 @@ def downmix(audio: np.ndarray):
     Args:
         audio ([np.ndarray]): array to downmix
     """
-    __check_audio_types(audio)
-    audio = audio.mean(axis=-2)
+    _check_audio_types(audio)
+    audio = audio.mean(axis=-2, keepdims=True)
     return audio
 
-def resample(audio: np.ndarray, old_sr: int, new_sr: int = 48000) -> np.darray:
+def resample(audio: np.ndarray, old_sr: int, new_sr: int = 48000) -> np.ndarray:
     """wrapper around librosa for resampling
 
     Args:
@@ -67,4 +70,34 @@ def resample(audio: np.ndarray, old_sr: int, new_sr: int = 48000) -> np.darray:
     Returns:
         np.darray: resampled audio. shape (channels, time)
     """
-    return librosa.resample(audio, old_sr, new_sr)
+    _check_audio_types(audio)
+
+    if _is_mono(audio):
+        audio = audio[0]
+        audio = librosa.resample(audio, old_sr, new_sr)
+        audio = np.expand_dims(audio, axis=-2)
+    else:
+        audio = librosa.resample(audio, old_sr, new_sr)
+    return audio
+
+def zero_pad(audio: np.ndarray, required_len: int = 48000) -> np.ndarray:
+    """zero pad audio array to meet required_len
+    if audio is already long enough, does nothing
+
+    Args:
+        audio (np.ndarray): audio array w shape (channels, sample)
+        required_len (int, optional): target length in samples. Defaults to 48000.
+
+    Returns:
+        np.ndarray: zero padded audio
+    """
+    _check_audio_types(audio)
+
+    num_frames = audio.shape[-1]
+    if num_frames >= required_len:
+        return audio
+
+    before = 0
+    after = required_len - num_frames%required_len
+    audio = np.pad(audio, pad_width=((before, after),), mode='constant', constant_values=0)
+    return audio
