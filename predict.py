@@ -1,6 +1,6 @@
 import os
 import logging
-logging.basicConfig(format='IALMODEL:%(asctime)s:%(message)s', level=logging.INFO)
+logging.basicConfig(format='IALMODEL:%(asctime)s:%(message)s', level=logging.WARNING)
 
 import yaml
 import numpy as np
