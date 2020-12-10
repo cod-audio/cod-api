@@ -81,8 +81,7 @@ def resample(audio: np.ndarray, old_sr: int, new_sr: int = 48000) -> np.ndarray:
     return audio
 
 def zero_pad(audio: np.ndarray, required_len: int = 48000) -> np.ndarray:
-    """zero pad audio array to meet required_len
-    if audio is already long enough, does nothing
+    """zero pad audio array to meet a multiple of required_len
 
     Args:
         audio (np.ndarray): audio array w shape (channels, sample)
@@ -94,10 +93,8 @@ def zero_pad(audio: np.ndarray, required_len: int = 48000) -> np.ndarray:
     _check_audio_types(audio)
 
     num_frames = audio.shape[-1]
-    if num_frames >= required_len:
-        return audio
 
     before = 0
     after = required_len - num_frames%required_len
-    audio = np.pad(audio, pad_width=((before, after),), mode='constant', constant_values=0)
+    audio = np.pad(audio, pad_width=((0, 0), (before, after)), mode='constant', constant_values=0)
     return audio
