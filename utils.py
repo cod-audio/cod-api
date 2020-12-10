@@ -20,7 +20,7 @@ def _is_mono(audio: np.ndarray):
 def load_audio_file(path_to_audio, sample_rate=48000):
     """ wrapper for loading mono audio with librosa
     returns:
-        audio (np.ndarray): monophonic audio with shape (channels, samples) 
+        audio (np.ndarray): monophonic audio with shape (channels, samples)
     """
     audio, sr = librosa.load(path_to_audio, mono=True, sr=sample_rate)
     # add channel dimension
@@ -39,17 +39,17 @@ def load_classlist(path_to_classlist: str) -> list:
     """[summary]
 
     Args:
-        path_to_classlist (str): path to classlist file in YAML format. 
+        path_to_classlist (str): path to classlist file in YAML format.
 
     Returns:
-        list: list of strings with classnames. 
+        list: list of strings with classnames.
     """
     with open(path_to_classlist, 'r') as f:
         classlist = yaml.load(f, Loader=yaml.SafeLoader)
     return classlist
 
 def downmix(audio: np.ndarray):
-    """ downmix an audio array. 
+    """ downmix an audio array.
     must be shape (channels, mono)
 
     Args:

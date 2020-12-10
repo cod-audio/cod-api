@@ -15,12 +15,12 @@ CLASSLIST_PATH = 'assets/classlist.yaml'
 class IALModel:
 
     def __init__(self, path_to_model: str, path_to_classlist: str):
-        """ loads a torch.jit model for inference in audio. 
+        """ loads a torch.jit model for inference in audio.
         """
         self.model = utils.load_jit_model(path_to_model)
         self.model.eval()
 
-        # TODO: it would be good to check that the length of the classlist 
+        # TODO: it would be good to check that the length of the classlist
         # matched the output of the model
         self.classlist = utils.load_classlist(path_to_classlist)
 
@@ -55,16 +55,16 @@ class IALModel:
         audio = torch.from_numpy(audio)
 
         # reshape to batch dimension
-        # TODO: need to enforce a maximum batch size 
+        # TODO: need to enforce a maximum batch size
         # to avoid OOM errors
         audio = audio.view(-1, 1, self.sample_rate)
 
-        # get class probabilities from model 
+        # get class probabilities from model
         logging.info(f'got a batch size of {audio.shape[0]}. doing forward pass...')
         probabilities = self.model(audio)
         logging.info(f'done!')
-        
-        # get the prediction indices by getting the argmax 
+
+        # get the prediction indices by getting the argmax
         prediction_indices = torch.argmax(probabilities, dim=1)
         confidences = torch.amax(probabilities, dim=1)
 
@@ -72,7 +72,7 @@ class IALModel:
         prediction_classes = [self.classlist[idx] if conf > self.conf_threshold else self.uncertain_class
                                 for conf, idx in zip(confidences, prediction_indices)]
         logging.info(f'predictions: {prediction_classes}')
-        
+
         return prediction_classes
 
     def predict_from_audio_file(self, path_to_audio):
