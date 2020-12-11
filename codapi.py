@@ -38,6 +38,4 @@ def label_track():
             ret['labels'].append({'label':label, 'start':time})
             last_label = label
 
-    ret = jsonify(ret)
-    ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
