@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 import numpy as np
 
@@ -15,8 +15,6 @@ def hello_world():
 @app.route('/api/label-track', methods=['POST'])
 @cross_origin()
 def label_track():
-    response.headers.add('Access-Control-Allow-Origin', '*')
-
     audio: List = list(request.json['buffer'].values())
     del request.json['buffer']
 
@@ -40,4 +38,6 @@ def label_track():
             ret['labels'].append({'label':label, 'start':time})
             last_label = label
 
+    ret = jsonify(ret)
+    ret.headers.add('Access-Control-Allow-Origin', '*')
     return ret
