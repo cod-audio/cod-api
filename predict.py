@@ -95,5 +95,8 @@ def _quick_model_test():
 if __name__ == "__main__":
     model = IALModel(path_to_model=MODEL_PATH, path_to_classlist=CLASSLIST_PATH)
      # load test audio
-    audio = utils.load_audio_file('/Users/hugo/Downloads/sarasate_op20_ff_01_moderato.mov',model.sample_rate)
-    predictions = model.predict_from_audio_array(audio, model.sample_rate)
+
+    for path in ['assets/drum-set.wav', 'assets/electric-bass.wav']:
+        audio = utils.load_audio_file(path, model.sample_rate)
+        predictions = model.predict_from_audio_array(audio, model.sample_rate)
+        print(f'{path} predictions: {predictions}')
