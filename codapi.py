@@ -15,11 +15,16 @@ def hello_world():
 @app.route('/api/label-track', methods=['POST'])
 @cross_origin()
 def label_track():
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
     audio: List = list(request.json['buffer'].values())
+    del request.json['buffer']
+
     sr: float = request.json['sampleRate']
     model = IALModel(MODEL_PATH, CLASSLIST_PATH)
 
     audio_array: np.ndarray = np.asarray(audio, dtype=np.float32)
+    del audio
 
     # Force it into a 2D array
     if len(audio_array.shape) == 1:
