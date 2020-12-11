@@ -1,14 +1,12 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import numpy as np
-from waitress import serve
 
 from typing import List
 from predict import IALModel, MODEL_PATH, CLASSLIST_PATH
 
 app = Flask(__name__)
 CORS(app)
-serve(app)
 
 model = IALModel(MODEL_PATH, CLASSLIST_PATH)
 
