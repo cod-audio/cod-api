@@ -54,6 +54,7 @@ class IALModel:
         # get class probabilities from model
         with torch.no_grad():
             probabilities = self.model(audio)
+            del audio
 
         # get the prediction indices by getting the argmax
         prediction_indices = torch.argmax(probabilities, dim=1)
