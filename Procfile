@@ -1,1 +1,1 @@
-web: gunicorn codapi:app
+web: gunicorn app:app
