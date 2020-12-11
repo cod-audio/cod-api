@@ -6,7 +6,7 @@ from typing import List
 from predict import IALModel, MODEL_PATH, CLASSLIST_PATH
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/')
 def hello_world():
