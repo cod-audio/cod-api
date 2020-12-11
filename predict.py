@@ -40,9 +40,7 @@ class IALModel:
         utils._check_audio_types(audio)
         # resample, downmix, and zero pad if needed
         audio = utils.resample(audio, sample_rate, self.sample_rate)
-
         audio = utils.downmix(audio)
-
         audio = utils.zero_pad(audio)
 
         # convert to torch tensor!
@@ -54,7 +52,8 @@ class IALModel:
         audio = audio.view(-1, 1, self.sample_rate)
 
         # get class probabilities from model
-        probabilities = self.model(audio)
+        with torch.no_grad():
+            probabilities = self.model(audio)
 
         # get the prediction indices by getting the argmax
         prediction_indices = torch.argmax(probabilities, dim=1)
