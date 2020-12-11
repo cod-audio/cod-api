@@ -8,8 +8,6 @@ from predict import IALModel, MODEL_PATH, CLASSLIST_PATH
 app = Flask(__name__)
 CORS(app)
 
-model = IALModel(MODEL_PATH, CLASSLIST_PATH)
-
 @app.route('/')
 def hello_world():
     return '<h1>Hello, Heroku!</h1>'
@@ -19,6 +17,7 @@ def hello_world():
 def label_track():
     audio: List = list(request.json['buffer'].values())
     sr: float = request.json['sampleRate']
+    model = IALModel(MODEL_PATH, CLASSLIST_PATH)
 
     audio_array: np.ndarray = np.asarray(audio, dtype=np.float32)
 
