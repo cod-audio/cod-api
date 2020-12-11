@@ -34,5 +34,6 @@ def label_track():
     for time, label in enumerate(labels):
         if label != last_label:
             ret['labels'].append({'label':label, 'start':time})
+            last_label = label
 
     return ret
