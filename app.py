@@ -16,7 +16,7 @@ def hello_world():
 @app.route('/api/label-track', methods=['POST'])
 @cross_origin()
 def label_track():
-    audio: List = list(request.json['buffer'])
+    audio: List = list(request.json['buffer'].values())
     sr: float = request.json['sampleRate']
 
     audio_array: np.ndarray = np.asarray(audio, dtype=np.float32)
