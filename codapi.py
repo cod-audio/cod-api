@@ -16,7 +16,12 @@ def label_track():
     audio: List = list(request.form['buffer'])
     sr: float = request.form['sampleRate']
 
-    audio_array = np.asarray(audio)
+    audio_array: np.ndarray = np.asarray(audio)
+
+    # Force it into a 2D array
+    if len(audio_array.shape) == 1:
+        audio_array = np.reshape(audio_array, (1, -1))
+
     labels: List[str] = model.predict_from_audio_array(audio_array, sr)
 
     ret = {'labels':[]}
