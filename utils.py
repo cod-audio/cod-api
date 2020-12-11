@@ -96,5 +96,7 @@ def zero_pad(audio: np.ndarray, required_len: int = 48000) -> np.ndarray:
 
     before = 0
     after = required_len - num_frames%required_len
+    if after == required_len:
+        return audio
     audio = np.pad(audio, pad_width=((0, 0), (before, after)), mode='constant', constant_values=0)
     return audio
