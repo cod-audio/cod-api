@@ -19,7 +19,7 @@ def label_track():
     audio: List = list(request.json['buffer'])
     sr: float = request.json['sampleRate']
 
-    audio_array: np.ndarray = np.asarray(audio)
+    audio_array: np.ndarray = np.asarray(audio, dtype=np.float32)
 
     # Force it into a 2D array
     if len(audio_array.shape) == 1:
